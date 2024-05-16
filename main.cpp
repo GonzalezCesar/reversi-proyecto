@@ -25,7 +25,7 @@ int main() {
   while (!game.gameOver()) {
 
     for (int i = 0; i < 2; i++) {
-      system("clear");
+      system("cls");
       while (true) {
         game.printTablero(player[i].getTurno());
         cout << endl
@@ -34,6 +34,8 @@ int main() {
         // cout << "c: " << game.tablero.getCapacidad() << endl;
         // cout << "p1 pieces: " << game.getFichasEnTablero(1) << endl;
         // cout << "p2 pieces: " << game.getFichasEnTablero(2) << endl;
+        if (game.realizarJugada(player[i].getTurno()))
+          break;
       }
     }
   }
