@@ -6,11 +6,6 @@
 #include "tablero.hpp"
 
 class Reversi {
-private:
-  coordenada fichasEnJuego[64];
-  int conteoDeFichas[2];
-  int ultimaFicha;
-
 public:
   Tablero tablero;
   Reversi();
@@ -31,22 +26,28 @@ public:
 
   bool chequearCercanias(coordenada posicion, int jugador);
 
-  // bool chequearCercanias2(coordenada posicion, int jugador);
-
-  void printTablero(int jugador);
+  void printTablero(int jugador); // remover al añadir interfaz
 
   void iniciarJuego();
 
-  void agregarFichaJugador(coordenada ficha);
-
-  coordenada *buscarJugadas(Jugador j);
-
   bool gameOver();
-  bool realizarJugada(int jugador);
-  void autoJugada(coordenada input, int jugador);
-  int getFichasEnTablero(int jugador);
-  int getGanador();
-  void anunciarGanador(Jugador p1, Jugador p2);
-};
 
+  bool realizarJugada(int jugador); // remover al añadir interfaz
+
+  void autoJugada(coordenada input, int jugador); // remover
+
+  int getGanador();
+
+  void anunciarGanador(Jugador p1, Jugador p2); // remover al añadir interfaz
+
+  void capturarFicha(coordenada posicion, int jugador);
+
+  bool agregarPosicionesSugeridas(int jugador); // TO DO movimientos permitidos.
+
+  void buscarPosicionesDisponibles(int jugador, coordenada ficha);
+
+  void marcarPosicionDisponible(coordenada sentido, coordenada posicionPrevia);
+
+  void sinMovimientosDisponibles();
+};
 #endif
