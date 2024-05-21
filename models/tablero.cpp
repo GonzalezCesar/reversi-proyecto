@@ -70,9 +70,9 @@ void Tablero::mostrarInformacionCorrespondiente(int jugador, int posicion) {
     cout << ".  ";
 
   else if (posicion == 1)
-    printf(RED "●  " RESET);
+    printf(RED "o  " RESET);
   else
-    printf(BLUE "●  " RESET);
+    printf(BLUE "o  " RESET);
 }
 
 int Tablero::getPosicion(coordenada p) { return tablero[p.y - 1][p.x - 1]; }
