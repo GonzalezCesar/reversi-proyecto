@@ -6,6 +6,8 @@
 #include "tablero.hpp"
 
 class Reversi {
+  int turnosSaltados = 0;
+
 public:
   Tablero tablero;
   Reversi();
@@ -42,12 +44,16 @@ public:
 
   void capturarFicha(coordenada posicion, int jugador);
 
-  bool agregarPosicionesSugeridas(int jugador); // TO DO movimientos permitidos.
+  bool agregarPosicionesSugeridas(int jugador);
 
   void buscarPosicionesDisponibles(int jugador, coordenada ficha);
 
   void marcarPosicionDisponible(coordenada sentido, coordenada posicionPrevia);
 
   void sinMovimientosDisponibles();
+
+  bool saltarTurno(int turno);
+
+  bool forzarGameOver();
 };
 #endif

@@ -3,6 +3,11 @@
 #include <iostream>
 #include <vector>
 
+#define RED "\x1b[31m"
+#define YELLOW "\x1b[33m"
+#define BLUE "\x1b[34m"
+#define RESET "\x1b[0m"
+
 using std::cout;
 using std::endl;
 using std::vector;
@@ -12,7 +17,6 @@ bool Tablero::tableroLleno() {
     return true;
   return false;
 }
-
 Tablero::Tablero() {
   for (int i = 0; i < 8; i++) {
     for (int j = 0; j < 8; j++) {
@@ -39,7 +43,6 @@ void Tablero::agregarFicha(coordenada p) {
 int (*(Tablero::getTablero)())[8] { return tablero; }
 
 void Tablero::mostrarTablero(int jugador) {
-  jugadasPosibles = 0;
   cout << "    1  2  3  4  5  6  7  8" << endl;
   cout << "    |  |  |  |  |  |  |  |" << endl;
 
@@ -52,7 +55,6 @@ void Tablero::mostrarTablero(int jugador) {
       if (tablero[i][j] == 3) {
         coordenada posicion{j + 1, i + 1, tablero[i][j]};
         sugerencias.push_back(posicion);
-        jugadasPosibles++;
       }
     }
     printSugerencias(sugerencias);
@@ -63,13 +65,14 @@ void Tablero::mostrarTablero(int jugador) {
 
 void Tablero::mostrarInformacionCorrespondiente(int jugador, int posicion) {
   if (posicion == 3)
-    cout << "x  ";
-
+    printf(YELLOW "x  " RESET);
   else if (posicion == 0)
     cout << ".  ";
 
+  else if (posicion == 1)
+    printf(RED "●  " RESET);
   else
-    cout << posicion << "  ";
+    printf(BLUE "●  " RESET);
 }
 
 int Tablero::getPosicion(coordenada p) { return tablero[p.y - 1][p.x - 1]; }
@@ -123,6 +126,7 @@ void Tablero::printFichasEnJuego() {
 }
 
 void Tablero::limpiarSugerencias() {
+  jugadasPosibles = 0;
   for (int i = 0; i < 8; i++) {
     for (int j = 0; j < 8; j++) {
       if (tablero[i][j] == 3)
@@ -136,9 +140,35 @@ void Tablero::printSugerencias(std::vector<coordenada> sugerencias) {
   if (sugerencias.size() >= 1) {
     cout << "  --> ";
     for (auto i : sugerencias) {
-      cout << "[" << i.x << ", " << i.y << "]";
+      printf(YELLOW "[%d, %d]" RESET, i.x, i.y);
+      // cout << "[" << i.x << ", " << i.y << "]";
     }
   }
 }
 
 int Tablero::getJugadasPosibles() { return jugadasPosibles; }
+
+void Tablero::testing() {
+  for (int i = 0; i < 8; i++) {
+    for (int j = 0; j < 8; j++) {
+      tablero[i][j] = 1;
+    }
+  }
+  tablero[7][7] = 0;
+  tablero[5][1] = 2;
+  tablero[5][2] = 2;
+  tablero[5][3] = 2;
+  tablero[1][3] = 2;
+  tablero[7][5] = 0;
+  tablero[7][6] = 0;
+  tablero[7][4] = 0;
+}
+
+void Tablero::contarJugadasPosibles() {
+  for (int i = 0; i < 8; i++) {
+    for (int j = 0; j < 8; j++) {
+      if (tablero[i][j] == 3)
+        jugadasPosibles++;
+    }
+  }
+}

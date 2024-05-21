@@ -3,6 +3,10 @@
 #include "../include/jugador.hpp"
 #include <iostream>
 
+#define RED "\x1b[31m"
+#define RESET "\x1b[0m"
+#define YELLOW "\x1b[33m"
+
 using std::cin;
 using std::cout;
 using std::endl;
@@ -12,7 +16,6 @@ coordenada ruta[] = {{-1, 0, 0}, {-1, -1, 0}, {0, -1, 0}, {1, -1, 0},
                      {-1, 1, 0}, {1, 0, 0},   {1, 1, 0},  {0, 1, 0}};
 
 int Reversi::siguienteJugador(int jugadorActual) {
-
   if (jugadorActual == 1)
     return 2;
   else
@@ -44,7 +47,6 @@ void Reversi::marcarLinea(coordenada sentido, coordenada posicionPrevia,
 
 bool Reversi::revisarLinea(coordenada sentido, coordenada posicionPrevia,
                            int jugador) {
-
   while (true) {
     if (tablero.getPosicion(posicionPrevia) == jugador)
       return true;
@@ -103,17 +105,14 @@ void Reversi::iniciarJuego() {
   }
 }
 bool Reversi::gameOver() {
-  if (tablero.tableroLleno())
+  if ((tablero.tableroLleno()) || (turnosSaltados == 2))
     return true;
+
   return false;
 }
 
 bool Reversi::realizarJugada(int jugador) {
   coordenada input;
-  if (tablero.getJugadasPosibles() == 0) {
-    sinMovimientosDisponibles();
-    return true;
-  }
 
   input.valor = jugador;
   cout << "x coord: ";
@@ -121,8 +120,9 @@ bool Reversi::realizarJugada(int jugador) {
   cout << "y coord: ";
   cin >> input.y;
 
-  if (((tablero.getPosicion(input) == 0) || (tablero.getPosicion(input))) &&
+  if (((tablero.getPosicion(input) == 3) && (tablero.getPosicion(input))) &&
       (chequearCercanias(input, jugador))) {
+    turnosSaltados = 0;
 
     marcarVecinos(input, jugador);
     tablero.agregarFicha(input);
@@ -130,14 +130,14 @@ bool Reversi::realizarJugada(int jugador) {
     return true;
 
   } else
-    cout << "\nMovimiento erroneo" << endl;
+    printf(RED "\nMovimiento erroneo.\n" RESET);
 
   return false;
 }
 
 void Reversi::autoJugada(coordenada input, int jugador) {
 
-  if (tablero.getPosicion(input) == 0) {
+  if (tablero.getPosicion(input) == 3) {
     input.valor = jugador;
     marcarVecinos(input, jugador);
     tablero.agregarFicha(input);
@@ -235,8 +235,29 @@ void Reversi::marcarPosicionDisponible(coordenada sentido,
 }
 
 void Reversi::sinMovimientosDisponibles() {
-  cout << "\nNo hay movimientos disponibles. Presione cualquier tecla para "
-          "continuar"
-       << endl;
+  printf(YELLOW
+         "\nNo hay movimientos disponibles. Presione cualquier tecla para "
+         "continuar\n" RESET);
   getchar();
+}
+
+bool Reversi::forzarGameOver() {
+  if (turnosSaltados == 2)
+    return true;
+  return false;
+}
+
+bool Reversi::saltarTurno(int turno) {
+  if (tablero.getJugadasPosibles() == 0) {
+    if ((turnosSaltados < 1) && (tablero.getCapacidad() > 0))
+      printf(YELLOW
+             "\nEl jugador %d no posee movimientos disponibles, su turno "
+             "ha sido saltado\n" RESET,
+             turno);
+
+    turnosSaltados++;
+    return true;
+  }
+
+  return false;
 }
