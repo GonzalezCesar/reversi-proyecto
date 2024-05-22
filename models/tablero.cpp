@@ -42,6 +42,7 @@ void Tablero::agregarFicha(coordenada p) {
 
 int (*(Tablero::getTablero)())[8] { return tablero; }
 
+//MOSTRAR EN LA UI
 void Tablero::mostrarTablero(int jugador) {
   cout << "    1  2  3  4  5  6  7  8" << endl;
   cout << "    |  |  |  |  |  |  |  |" << endl;

@@ -1,0 +1,1 @@
+g++ -std=c++11 main.cpp menu/UI.cpp C:\MinGW64\x86_64-w64-mingw32\include\pdcurs36\wincon\pdcurses.a -o main
