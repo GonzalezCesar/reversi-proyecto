@@ -3,37 +3,32 @@
 #include "../include/jugador.hpp"
 #include <iostream>
 
-#define RED "\x1b[31m"
-#define RESET "\x1b[0m"
-#define YELLOW "\x1b[33m"
-
 using std::cin;
 using std::cout;
 using std::endl;
 Reversi::Reversi() {}
 
-coordenada ruta[] = {{-1, 0, 0}, {-1, -1, 0}, {0, -1, 0}, {1, -1, 0},
+coordenada ruta[] = {{-1, 0, 0}, {-1, -1, 0}, {0, -1, 0}, {1, -1, 0}, //Sentidos de búsqueda
                      {-1, 1, 0}, {1, 0, 0},   {1, 1, 0},  {0, 1, 0}};
 
-int Reversi::siguienteJugador(int jugadorActual) {
+int Reversi::siguienteJugador(int jugadorActual) { //Retorna el jugador contrario
   if (jugadorActual == 1)
     return 2;
   else
     return 1;
 }
 
-bool Reversi::fueraDeRango(coordenada p) {
-  if ((p.x > 8 || p.y > 8) || (p.x < 1 || p.y < 1)) {
+bool Reversi::fueraDeRango(coordenada p) {            //Verdadero si las coordenadas dadas
+  if ((p.x > 8 || p.y > 8) || (p.x < 1 || p.y < 1)) { //van más allá de la dimensión del tablero
     return true;
   }
   return false;
 }
 
-void Reversi::marcarLinea(coordenada sentido, coordenada posicionPrevia,
-                          int jugador) {
+void Reversi::marcarLinea(coordenada sentido, coordenada posicionPrevia, //convierte en una dirección las fichas rivales encerradas
+                          int jugador) {                                 //en el flanqueo
   int posiciones = 0;
-
-  while (tablero.getPosicion(posicionPrevia) == siguienteJugador(jugador)) {
+  while (tablero->getPosicion(posicionPrevia) == siguienteJugador(jugador)) {
 
     if (revisarLinea(sentido, posicionPrevia, jugador)) {
       capturarFicha(posicionPrevia, jugador);
@@ -45,10 +40,10 @@ void Reversi::marcarLinea(coordenada sentido, coordenada posicionPrevia,
   }
 }
 
-bool Reversi::revisarLinea(coordenada sentido, coordenada posicionPrevia,
-                           int jugador) {
-  while (true) {
-    if (tablero.getPosicion(posicionPrevia) == jugador)
+bool Reversi::revisarLinea(coordenada sentido, coordenada posicionPrevia, //revisa en una dirección 
+                           int jugador) {                                 //verdadero: encuentra una ficha del jugador
+  while (true) {                                                           //falso: nunca la encuentra
+    if (tablero->getPosicion(posicionPrevia) == jugador)
       return true;
 
     posicionPrevia.x += sentido.x;
@@ -60,8 +55,8 @@ bool Reversi::revisarLinea(coordenada sentido, coordenada posicionPrevia,
   return false;
 }
 
-bool Reversi::marcarVecinos(coordenada posicion, int jugador) {
-  int chequeo = 0;
+bool Reversi::marcarVecinos(coordenada posicion, int jugador) { //Revisa en las adyacencias de una ficha para
+  int chequeo = 0;                                              //realizar múltiples flanqueos
 
   for (int i = 0; i < 8; i++) {
     coordenada posicionVecina = posicion;
@@ -76,17 +71,15 @@ bool Reversi::marcarVecinos(coordenada posicion, int jugador) {
   return false;
 }
 
-bool Reversi::chequearCercanias(coordenada posicion, int jugador) {
-  int chequeo = 0;
-
-  for (int i = 0; i < 8; i++) {
-    coordenada posicionVecina = posicion;
-
+bool Reversi::chequearCercanias(coordenada posicion, int jugador) {//Revisa en las adyacencias de una ficha para
+  for (int i = 0; i < 8; i++) {                                    //Encontrar posibles flanqueos
+    coordenada posicionVecina = posicion;                          //verdadero: hay flanqueos
+                                                                   //falso: no los hay
     posicionVecina.x += ruta[i].x;
     posicionVecina.y += ruta[i].y;
 
     if (!fueraDeRango(posicionVecina)) {
-      if ((tablero.getPosicion(posicionVecina) == siguienteJugador(jugador)) &&
+      if ((tablero->getPosicion(posicionVecina) == siguienteJugador(jugador)) &&
           revisarLinea(ruta[i], posicion, jugador))
         return true;
     }
@@ -94,59 +87,43 @@ bool Reversi::chequearCercanias(coordenada posicion, int jugador) {
   return false;
 }
 
-void Reversi::printTablero(int jugador) { tablero.mostrarTablero(jugador); }
-
 void Reversi::iniciarJuego() {
-  coordenada jugadas[] = {{5, 4, 1}, {4, 5, 1}, {5, 5, 2}, {4, 4, 2}};
+  coordenada jugadas[] = {{5, 4, 2}, {4, 5, 2}, {5, 5, 1}, {4, 4, 1}};
 
   for (int i = 0; i < 4; i++) {
-    tablero.agregarFicha(jugadas[i]);
-    tablero.guardarFichaJugada(jugadas[i]);
+    tablero->agregarFicha(jugadas[i]);
+    tablero->guardarFichaJugada(jugadas[i]);
   }
 }
 bool Reversi::gameOver() {
-  if ((tablero.tableroLleno()) || (turnosSaltados == 2))
+  if ((tablero->tableroLleno()) || (turnosSaltados == 2)) {
     return true;
+  }
 
   return false;
 }
 
-bool Reversi::realizarJugada(int jugador) {
-  coordenada input;
+bool Reversi::realizarJugada(coordenada posicion, int jugador) { //aplica movimiento del jugador al tablero
+  posicion.valor = jugador;
 
-  input.valor = jugador;
-  cout << "x coord: ";
-  cin >> input.x;
-  cout << "y coord: ";
-  cin >> input.y;
-
-  if (((tablero.getPosicion(input) == 3) && (tablero.getPosicion(input))) &&
-      (chequearCercanias(input, jugador))) {
+  if (((tablero->getPosicion(posicion) == 3) &&
+       (tablero->getPosicion(posicion))) &&
+      (chequearCercanias(posicion, jugador))) {
     turnosSaltados = 0;
 
-    marcarVecinos(input, jugador);
-    tablero.agregarFicha(input);
-    tablero.guardarFichaJugada(input);
+    marcarVecinos(posicion, jugador);
+    tablero->agregarFicha(posicion);
+    tablero->guardarFichaJugada(posicion);
     return true;
 
   } else
-    printf(RED "\nMovimiento erroneo.\n" RESET);
 
   return false;
 }
 
-void Reversi::autoJugada(coordenada input, int jugador) {
-
-  if (tablero.getPosicion(input) == 3) {
-    input.valor = jugador;
-    marcarVecinos(input, jugador);
-    tablero.agregarFicha(input);
-  }
-}
-
 int Reversi::getGanador() {
-  int fichas1 = tablero.getConteoDeFichas(1);
-  int fichas2 = tablero.getConteoDeFichas(2);
+  int fichas1 = tablero->getConteoDeFichas(1);
+  int fichas2 = tablero->getConteoDeFichas(2);
 
   if (fichas1 > fichas2)
     return 1;
@@ -156,24 +133,13 @@ int Reversi::getGanador() {
   return 0;
 }
 
-void Reversi::anunciarGanador(Jugador p1, Jugador p2) {
-  if (getGanador() == 1) {
-    cout << p1.getNombre() << "(" << p1.getTurno() << ")"
-         << " es el ganador!" << endl;
-  } else if (getGanador() == 2) {
-    cout << p2.getNombre() << "(" << p2.getTurno() << ")"
-         << " es el ganador!" << endl;
-  } else
-    cout << "Empate!" << endl;
+void Reversi::capturarFicha(coordenada posicion, int jugador) { //Modifica las fichas en el tablero
+  tablero->agregarFicha(posicion);
+  tablero->modificarFichaEnJuego(posicion);
 }
 
-void Reversi::capturarFicha(coordenada posicion, int jugador) {
-  tablero.agregarFicha(posicion);
-  tablero.modificarFichaEnJuego(posicion);
-}
-
-bool Reversi::agregarPosicionesSugeridas(int jugador) {
-  std::vector<coordenada> fichas = tablero.getFichasEnJuego();
+bool Reversi::agregarPosicionesSugeridas(int jugador) {    //Agrega al tablero los movimientos disponibles para un jugador
+  std::vector<coordenada> fichas = tablero->getFichasEnJuego();
 
   for (auto i : fichas) {
     if (i.valor == jugador) {
@@ -183,8 +149,8 @@ bool Reversi::agregarPosicionesSugeridas(int jugador) {
   return false;
 }
 
-void Reversi::buscarPosicionesDisponibles(int jugador, coordenada ficha) {
-
+void Reversi::buscarPosicionesDisponibles(int jugador, coordenada ficha) {//Revisa en las adyacencias de una ficha
+                                                                          //y marca en el tablero las jugadas posibles
   for (int i = 0; i < 8; i++) {
     coordenada posicionVecina = ficha;
 
@@ -192,36 +158,28 @@ void Reversi::buscarPosicionesDisponibles(int jugador, coordenada ficha) {
     posicionVecina.y += ruta[i].y;
 
     if (!fueraDeRango(posicionVecina)) {
-      if ((tablero.getPosicion(posicionVecina) == siguienteJugador(jugador)))
-        // cout << "in" << endl;
+      if ((tablero->getPosicion(posicionVecina) == siguienteJugador(jugador)))
         marcarPosicionDisponible(ruta[i], ficha);
     }
   }
 }
 
-void Reversi::marcarPosicionDisponible(coordenada sentido,
-                                       coordenada posicionPrevia) {
-  bool chequeo = false;
-  // cout << "\n[sentido: " << sentido.x << ", " << sentido.y << "]" << endl;
-  // cout << "from: " << posicionPrevia.x << ", " << posicionPrevia.y;
+void Reversi::marcarPosicionDisponible(coordenada sentido,coordenada posicionPrevia) {//Revisa en una dirección la
+  bool chequeo = false;                                                               //posible jugada y la marca
   while (true) {
-    if (tablero.getPosicion(posicionPrevia) == 0) {
-      // cout << " | to: " << posicionPrevia.x << ", " << posicionPrevia.y;
+    if (tablero->getPosicion(posicionPrevia) == 0) {
       break;
     }
 
-    if (tablero.getPosicion(posicionPrevia) ==
-        tablero.getJugadorContrario(posicionPrevia.valor))
+    if (tablero->getPosicion(posicionPrevia) == tablero->getJugadorContrario(posicionPrevia.valor))
       chequeo = true;
 
-    else
-      chequeo = false;
+    else chequeo = false;
 
     posicionPrevia.x += sentido.x;
     posicionPrevia.y += sentido.y;
 
     if (fueraDeRango(posicionPrevia)) {
-
       chequeo = false;
       break;
     }
@@ -229,35 +187,22 @@ void Reversi::marcarPosicionDisponible(coordenada sentido,
 
   if (chequeo) {
     posicionPrevia.valor = 3;
-    // cout << " --> " << posicionPrevia.x << ", " << posicionPrevia.y << endl;
-    tablero.agregarFicha(posicionPrevia);
+    tablero->agregarFicha(posicionPrevia);
   }
-}
-
-void Reversi::sinMovimientosDisponibles() {
-  printf(YELLOW
-         "\nNo hay movimientos disponibles. Presione cualquier tecla para "
-         "continuar\n" RESET);
-  getchar();
-}
-
-bool Reversi::forzarGameOver() {
-  if (turnosSaltados == 2)
-    return true;
-  return false;
 }
 
 bool Reversi::saltarTurno(int turno) {
-  if (tablero.getJugadasPosibles() == 0) {
-    if ((turnosSaltados < 1) && (tablero.getCapacidad() > 0))
-      printf(YELLOW
-             "\nEl jugador %d no posee movimientos disponibles, su turno "
-             "ha sido saltado\n" RESET,
-             turno);
-
+  if (tablero->getJugadasPosibles() == 0) {
     turnosSaltados++;
     return true;
   }
-
   return false;
+}
+
+void Reversi::setTablero(Tablero *t) { tablero = t; }
+
+void Reversi::refrescarSugerencias(int jugadorActual) { //Limpia movimientos disponibles del jugador
+  tablero->limpiarSugerencias();                        //anterior y agrega los del actual
+  agregarPosicionesSugeridas(jugadorActual);
+  tablero->contarJugadasPosibles();
 }

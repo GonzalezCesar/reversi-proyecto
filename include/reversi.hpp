@@ -7,16 +7,13 @@
 
 class Reversi {
   int turnosSaltados = 0;
+  Tablero *tablero;
 
 public:
-  Tablero tablero;
   Reversi();
-
-  void removerFicha(int jugador);
-
   bool revisarLinea(coordenada sentido, coordenada posicionPrevia, int jugador);
 
-  int siguienteJugador(int jugadorActual);
+  int siguienteJugador(int jugadorActual); 
 
   void marcarPosicion(coordenada p, int jugador);
 
@@ -28,19 +25,13 @@ public:
 
   bool chequearCercanias(coordenada posicion, int jugador);
 
-  void printTablero(int jugador); // remover al añadir interfaz
-
   void iniciarJuego();
 
   bool gameOver();
 
-  bool realizarJugada(int jugador); // remover al añadir interfaz
-
-  void autoJugada(coordenada input, int jugador); // remover
+  bool realizarJugada(coordenada posicion,int jugador); 
 
   int getGanador();
-
-  void anunciarGanador(Jugador p1, Jugador p2); // remover al añadir interfaz
 
   void capturarFicha(coordenada posicion, int jugador);
 
@@ -50,10 +41,10 @@ public:
 
   void marcarPosicionDisponible(coordenada sentido, coordenada posicionPrevia);
 
-  void sinMovimientosDisponibles();
-
   bool saltarTurno(int turno);
 
-  bool forzarGameOver();
+  void setTablero(Tablero *t);
+
+  void refrescarSugerencias(int jugadorActual);
 };
 #endif

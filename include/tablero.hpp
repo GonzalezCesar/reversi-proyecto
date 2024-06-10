@@ -7,7 +7,7 @@
 
 class Tablero {
 private:
-  int capacidad = 64;
+  int capacidad = 60;
   int tablero[8][8];
   std::vector<coordenada> fichasEnJuego;
   int conteoDeFichas[2];
@@ -18,51 +18,34 @@ public:
 
   bool tableroLleno();
 
-  void agregarFicha(coordenada p); // agrega ficha a la matriz
+  void agregarFicha(coordenada p); 
 
   int (*(getTablero)())[8];
 
-  int getPosicion(coordenada p); // Devuelve el valor del la matriz en la
-                                 // coordenada especificada
-
-  void mostrarTablero(int jugador); //(1)
-
-  void mostrarInformacionCorrespondiente(
-      int jugador, int posicion); //(1) imprime los símbolso correspondientes a
-                                  //los números en la matriz
-
+  int getPosicion(coordenada p); 
+                                 
   int getCapacidad();
 
-  std::vector<coordenada> getFichasEnJuego(); // arreglo dinámico con las fichas
+  std::vector<coordenada> getFichasEnJuego();
 
-  void modificarFichaEnJuego(
-      coordenada ficha); // modifica el arreglo dinámico con la información
-                         // actualizada de las fichas
+  void modificarFichaEnJuego(coordenada ficha);
 
-  void guardarFichaJugada(
-      coordenada p); // agrega ficha al arreglo dinámico de fichas
+  void guardarFichaJugada(coordenada p);
 
   void disminuirFichasJugador(int jugador);
 
   bool coordenadasIguales(coordenada p1, coordenada p2);
 
-  int getJugadorContrario(int jugador); //(1)
+  int getJugadorContrario(int jugador); 
 
   int getConteoDeFichas(int jugador);
 
-  void printFichasEnJuego(); // (1)
-
-  void limpiarSugerencias(); //(1)
-
-  void printSugerencias(std::vector<coordenada> sugerencias); //(1)
+  void limpiarSugerencias(); 
 
   int getJugadasPosibles();
-
-  void testing(); //(1)
 
   void contarJugadasPosibles();
 };
 
 #endif
 
-//(1): remover luego
